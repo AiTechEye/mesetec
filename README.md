@@ -1,7 +1,10 @@
 # mesetec
 
 License: CC0
+
 Depends: default, mesecons
+
+Version 3.11
 
 
 This mod adds some extra and usefull mesecons stuff.
