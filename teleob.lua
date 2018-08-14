@@ -300,7 +300,7 @@ minetest.register_node("mesetec:ptptarget", {
 		if mesetec.player_teleport.targets then
 			for i, ob in pairs(mesetec.player_teleport.targets) do
 				if ob then
-					ob:moveto(pos)
+					ob:move_to(pos)
 				end
 			end
 		end
