@@ -1,10 +1,10 @@
 # mesetec
 
-License: CC0
+License: License: code: LGPL-2.1, media: CC BY-SA-4.0
 
 Depends: default, mesecons
 
-Version 3.11
+Version 3.2
 
 
 This mod adds some extra and usefull mesecons stuff.
