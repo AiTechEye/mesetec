@@ -99,7 +99,7 @@ after_place_node = function(pos, placer)
 		mesetec.nodeswitch_user[p]={pos=pos,name=p,id=id}
 	end, p,id,pos)
 
-	minetest.after(10, function(p,id)
+	minetest.after(60, function(p,id)
 		if mesetec.nodeswitch_user[p] and mesetec.nodeswitch_user[p].id==id then
 			mesetec.nodeswitch_user[p]=nil
 		end
