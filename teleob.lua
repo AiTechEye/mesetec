@@ -1,44 +1,40 @@
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)
-	if mesetec.nodeswitch_user then
-		local name=placer:get_player_name()
-		if mesetec.nodeswitch_user[name] then
-			if minetest.get_item_group(newnode.name,"liquid")>0 then
-				return
-			elseif mesetec.nodeswitch_user[name].p1 then
-				minetest.add_entity(pos, "mesetec:pos2"):get_luaentity().user=name
-				mesetec.nodeswitch_user[name].p2=pos
-				mesetec.nodeswitch_user[name].node2=newnode.name
-				mesetec.consnodeswitch(name)
-			else
-				minetest.add_entity(pos, "mesetec:pos1"):get_luaentity().user=name
-				minetest.add_entity(pos, "mesetec:pos1")
-				mesetec.nodeswitch_user[name].p1=pos
-				mesetec.nodeswitch_user[name].node1=newnode.name
-			end
+	local name=placer:get_player_name()
+	if mesetec.nodeswitch_user[name] then
+		if minetest.get_item_group(newnode.name,"liquid")>0 then
+			return
+		elseif mesetec.nodeswitch_user[name].p1 then
+			minetest.add_entity(pos, "mesetec:pos2"):get_luaentity().user=name
+			mesetec.nodeswitch_user[name].p2=pos
+			mesetec.nodeswitch_user[name].node2=newnode.name
+			mesetec.consnodeswitch(name)
+		else
+			minetest.add_entity(pos, "mesetec:pos1"):get_luaentity().user=name
+			minetest.add_entity(pos, "mesetec:pos1")
+			mesetec.nodeswitch_user[name].p1=pos
+			mesetec.nodeswitch_user[name].node1=newnode.name
 		end
 	end
 end)
 
 minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
-	if mesetec.nodeswitch_user then
-		local name=puncher:get_player_name()
-		if mesetec.nodeswitch_user[name] then
-			if minetest.get_node(pointed_thing.above).name~="air" then
-				return
-			elseif mesetec.nodeswitch_user[name].p1 then
-				if mesetec.nodeswitch_user[name].pun then
-					minetest.chat_send_player(name, "A node is already punched")
-				end
-				minetest.add_entity(pointed_thing.above, "mesetec:pos2"):get_luaentity().user=name
-				mesetec.nodeswitch_user[name].p2=pointed_thing.above
-				mesetec.nodeswitch_user[name].node2=minetest.get_node(pointed_thing.above).name
-				mesetec.consnodeswitch(name)
-			else
-				minetest.add_entity(pointed_thing.above, "mesetec:pos1"):get_luaentity().user=name
-				mesetec.nodeswitch_user[name].p1=pointed_thing.above
-				mesetec.nodeswitch_user[name].pun=1
-				mesetec.nodeswitch_user[name].node1=minetest.get_node(pointed_thing.above).name
+	local name=puncher:get_player_name()
+	if mesetec.nodeswitch_user[name] then
+		if minetest.get_node(pointed_thing.above).name~="air" then
+			return
+		elseif mesetec.nodeswitch_user[name].p1 then
+			if mesetec.nodeswitch_user[name].pun then
+				minetest.chat_send_player(name, "A node is already punched")
 			end
+			minetest.add_entity(pointed_thing.above, "mesetec:pos2"):get_luaentity().user=name
+			mesetec.nodeswitch_user[name].p2=pointed_thing.above
+			mesetec.nodeswitch_user[name].node2=minetest.get_node(pointed_thing.above).name
+			mesetec.consnodeswitch(name)
+		else
+			minetest.add_entity(pointed_thing.above, "mesetec:pos1"):get_luaentity().user=name
+			mesetec.nodeswitch_user[name].p1=pointed_thing.above
+			mesetec.nodeswitch_user[name].pun=1
+			mesetec.nodeswitch_user[name].node1=minetest.get_node(pointed_thing.above).name
 		end
 	end
 end)
@@ -56,7 +52,6 @@ mesetec.consnodeswitch=function(name)
 		meta:set_string("pos2",minetest.pos_to_string(npos2))
 		meta:set_int("able",1)
 		mesetec.nodeswitch_user[name]=nil
-		if #mesetec.nodeswitch_user==0 then mesetec.nodeswitch_user=nil end
 	end
 end
 
@@ -95,23 +90,20 @@ minetest.register_node("mesetec:nodeswitch", {
 after_place_node = function(pos, placer)
 	local meta=minetest.get_meta(pos)
 	local p=placer:get_player_name()
+	local id=math.random(1,9999)
 	meta:set_string("owner",p)
 	minetest.chat_send_player(p, "Place the 1 or 2 nodes to replace with each other")
 	minetest.chat_send_player(p, "Or punch somwehere to move the node to there")
 
+	minetest.after(0.1, function(p,id,pos)
+		mesetec.nodeswitch_user[p]={pos=pos,name=p,id=id}
+	end, p,id,pos)
 
-	if not mesetec.nodeswitch_user then mesetec.nodeswitch_user={} end
-	
-	minetest.after(0.1, function(p)
-		mesetec.nodeswitch_user[p]={pos=pos,name=p}
-	end, p)
-
-	minetest.after(60, function(p)
-		if mesetec.nodeswitch_user then
-			if mesetec.nodeswitch_user[p] then mesetec.nodeswitch_user[p]=nil end
-			if #mesetec.nodeswitch_user==0 then mesetec.nodeswitch_user=nil end
+	minetest.after(10, function(p,id)
+		if mesetec.nodeswitch_user[p] and mesetec.nodeswitch_user[p].id==id then
+			mesetec.nodeswitch_user[p]=nil
 		end
-	end, p)
+	end, p,id)
 end,
 
 

@@ -1,4 +1,11 @@
-mesetec={maxlight=default.LIGHT_MAX or 15, player_teleport={},mtcuser={},mtpuser={},rules={{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=0,y=0,z=1},{x=0,y=0,z=-1}}
+mesetec={
+	maxlight=default.LIGHT_MAX or 15,
+	player_teleport={},
+	mtcuser={},
+	mtpuser={},
+	nodeswitch_user={},
+	rules={{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=0,y=0,z=1},{x=0,y=0,z=-1}
+}
 
 
 
